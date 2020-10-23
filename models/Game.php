@@ -63,7 +63,7 @@ class Game
     }
 
     /**
-     * 
+     * Add new database record base on this object's properties
      */
     public function insert()
     {
@@ -98,6 +98,19 @@ class Game
         ]);
 
         $this->id = $databaseHandler->lastInsertId();
+    }
+
+    /**
+     * Delete matching database record
+     */
+    public function delete()
+    {
+        global $databaseHandler;
+
+        $statement = $databaseHandler->prepare('DELETE FROM `game` WHERE `id` = :id');
+        $statement->execute([ ':id' => $this->id ]);
+
+        $this->id = null;
     }
 
     /**
