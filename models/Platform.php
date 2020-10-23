@@ -20,7 +20,7 @@ class Platform extends AbstractBrand
     public static function fetchById(int $id) {
         global $databaseHandler;
 
-        $statement = $databaseHandler->prepare('SELECT * FROM `platfofrm` WHERE `id` = :id');
+        $statement = $databaseHandler->prepare('SELECT * FROM `platform` WHERE `id` = :id');
         $statement->execute([ ':id' => $id ]);
         $result = $statement->fetchAll(PDO::FETCH_FUNC, 'Platform::create');
         
