@@ -1,14 +1,18 @@
 <?php
 
+require_once './models/Developer.php';
+require_once './models/Platform.php';
+require_once './models/Game.php';
+
 // Etablit une connexion avec la base de données
 $databaseHandler = new PDO('mysql:host=localhost;dbname=videogames', 'root', 'root');
 // Configure l'interface avec la base de données pour afficher toutes les erreurs
 $databaseHandler->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $databaseHandler->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
-$statement = $databaseHandler->query('SELECT * FROM `game`');
-var_dump($statement->fetchAll());
-die();
+$games = Game::fetchAll();
+$developers = Developer::fetchAll();
+$platforms = Platform::fetchAll();
 
 ?>
 
@@ -43,17 +47,19 @@ die();
                     </tr>
                 </thead>
                 <tbody>
+
+                    <?php foreach($games as $game): ?>
                     <tr>
-                        <th scope="row">1</th>
+                        <th scope="row"><?= $game->getId() ?></th>
                         <td>
-                            <a href="https://en.wikipedia.org/wiki/Populous_(video_game)">Populous</a>
+                            <a href="<?= $game->getLink() ?>" target="_blank"><?= $game->getTitle() ?></a>
                         </td>
-                        <td>5 june 1989</td>
+                        <td><?= $game->getReleaseDate()->format('d M Y') ?></td>
                         <td>
-                            <a href="https://en.wikipedia.org/wiki/Bullfrog_Productions">Bullfrog Productions</a>
+                            <a href="<?= $game->getDeveloper()->getLink() ?>" target="_blank"><?= $game->getDeveloper()->getName() ?></a>
                         </td>
                         <td>
-                            <a href="https://en.wikipedia.org/wiki/Amiga">Amiga</a>
+                            <a href="<?= $game->getPlatform()->getLink() ?>" target="_blank"><?= $game->getPlatform()->getName() ?></a>
                         </td>
                         <td>
                             <button class="btn btn-primary btn-sm">
@@ -66,29 +72,8 @@ die();
                             </button>
                         </td>
                     </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>
-                            <a href="https://en.wikipedia.org/wiki/Populous_(video_game)">Doom</a>
-                        </td>
-                        <td>10 December 1993</td>
-                        <td>
-                            <a href="https://en.wikipedia.org/wiki/Bullfrog_Productions">id Software</a>
-                        </td>
-                        <td>
-                            <a href="https://en.wikipedia.org/wiki/MS-DOS">MS-DOS</a>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <button class="btn btn-danger btn-sm">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </td>
-                    </tr>
+                    <?php endforeach; ?>
+
                     <form>
                         <tr>
                             <th scope="row"></th>
