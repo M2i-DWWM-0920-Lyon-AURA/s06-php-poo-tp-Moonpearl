@@ -7,6 +7,12 @@ require_once '../models/Game.php';
 
 // Essaie de créer un nouveau jeu à partir des donneés du formulaire
 try {
+    if (isset($_POST['id'])) {
+        $id = $_POST['id'];
+    } else {
+        $id = null;
+    }
+
     // Si la requête POST contient bien toutes les valeurs attendues dans le formulare
     if (isset($_POST['title'])
         && isset($_POST['release_date'])
@@ -36,7 +42,7 @@ try {
 
         // Crée un nouvel objet Game à partir des données du formulaire
         $game = new Game(
-            null,
+            $id,
             $_POST['title'],
             new DateTime($_POST['release_date']),
             $_POST['link'],
@@ -45,9 +51,15 @@ try {
         );
         
         // Sauvegarde le nouveau jeu en base de données
-        $game->insert();
+        $game->save();
 
-        header('Location: /?success=1');
+        if (is_null($id)) {
+            $success = 1;
+        } else {
+            $success = 2;
+        }
+
+        header('Location: /?success=' . $success);
     // Sinon
     } else {
         throw new InvalidValueException('Form data is not valid.', 0);

@@ -63,9 +63,21 @@ class Game
     }
 
     /**
+     * Save current object state in database
+     */
+    public function save() 
+    {
+        if (is_null($this->id)) {
+            $this->insert();
+        } else {
+            $this->update();
+        }
+    }
+
+    /**
      * Add new database record base on this object's properties
      */
-    public function insert()
+    protected function insert()
     {
         global $databaseHandler;
 
@@ -98,6 +110,33 @@ class Game
         ]);
 
         $this->id = $databaseHandler->lastInsertId();
+    }
+
+    /**
+     * Update macthing database record
+     */
+    protected function update()
+    {
+        global $databaseHandler;
+
+        $statement = $databaseHandler->prepare('
+            UPDATE `game`
+            SET
+                `title` = :title,
+                `release_date` = :release_date,
+                `link` = :link,
+                `developer_id` = :developer_id,
+                `platform_id` = :platform_id
+            WHERE `id` = :id
+        ');
+        $statement->execute([
+            ':id' => $this->id,
+            ':title' => $this->title,
+            ':release_date' => $this->releaseDate->format('Y-m-d'),
+            ':link' => $this->link,
+            ':developer_id' => $this->developerId,
+            ':platform_id' => $this->platformId,            
+        ]);
     }
 
     /**

@@ -30,7 +30,18 @@ $platforms = Platform::fetchAll();
 
             <?php if (isset($_GET['success'])): ?>
             <div class="alert alert-success">
-                Nouveau jeu ajouté avec succès!
+                <?php
+                
+                switch ($_GET['success']) {
+                    case 1:
+                        echo 'Nouveau jeu ajouté avec succès!';
+                        break;
+                    case 2:
+                        echo 'Jeu modifié avec succès!';
+                        break;
+                }
+
+                ?>
             </div>
             <?php endif; ?>
 
@@ -50,7 +61,6 @@ $platforms = Platform::fetchAll();
                         break;                    
                     default:
                         echo 'Une erreur est survenue dans l\'envoi de votre requête. Veuillez réessayer.';
-                        break;
                 }
 
                 ?>
@@ -71,32 +81,85 @@ $platforms = Platform::fetchAll();
                 </thead>
                 <tbody>
 
+                    <!-- Pour chaque jeu récupéré de la base de données -->
                     <?php foreach($games as $game): ?>
                     <tr>
-                        <th scope="row"><?= $game->getId() ?></th>
-                        <td>
-                            <a href="<?= $game->getLink() ?>" target="_blank"><?= $game->getTitle() ?></a>
-                        </td>
-                        <td><?= $game->getReleaseDate()->format('d M Y') ?></td>
-                        <td>
-                            <a href="<?= $game->getDeveloper()->getLink() ?>" target="_blank"><?= $game->getDeveloper()->getName() ?></a>
-                        </td>
-                        <td>
-                            <a href="<?= $game->getPlatform()->getLink() ?>" target="_blank"><?= $game->getPlatform()->getName() ?></a>
-                        </td>
-                        <td>
-                            <button class="btn btn-primary btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </td>
-                        <td>
-                            <form method="post" action="actions/delete-game.php">
-                                <input type="hidden" name="id" value="<?= $game->getId() ?>" />
-                                <button type="submit" class="btn btn-danger btn-sm">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
+                        <!-- Si on a récupéré l'ID d'un jeu à modifier et que l'ID du jeu courant correspond -->
+                        <?php if (isset($_GET['edit-id']) && $_GET['edit-id'] == $game->getId()): ?>
+                            <!-- Affiche un formulaire de modification -->
+                            <form method="post" action="actions/add-game.php">
+                                <tr>
+                                    <th scope="row"><?= $game->getId() ?></th>
+                                    <td>
+                                        <input type="text" name="title" placeholder="Title" value="<?= $game->getTitle() ?>" />
+                                        <br />
+                                        <input type="text" name="link" placeholder="External link" value="<?= $game->getLink() ?>" />
+                                    </td>
+                                    <td>
+                                        <input type="date" name="release_date" value="<?= $game->getReleaseDate()->format('Y-m-d') ?>" />
+                                    </td>
+                                    <td>
+                                        <select name="developer">
+
+                                            <?php foreach ($developers as $developer): ?>
+                                            <option value="<?= $developer->getId() ?>" <?php if ($developer->getId() === $game->getDeveloper()->getId()) { echo 'selected=true'; } ?>>
+                                                <?= $developer->getName() ?>
+                                            </option>
+                                            <?php endforeach; ?>
+
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select name="platform">
+
+                                            <?php foreach ($platforms as $platform): ?>
+                                            <option value="<?= $platform->getId() ?>" <?php if ($platform->getId() === $game->getPlatform()->getId()) { echo 'selected=true'; } ?>>
+                                                <?= $platform->getName() ?>
+                                            </option>
+                                            <?php endforeach; ?>
+
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="hidden" name="id" value="<?= $game->getId() ?>" />
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </td>
+                                    <td></td>
+                                </tr>
                             </form>
-                        </td>
+                        <!-- Sinon -->
+                        <?php else: ?>
+                            <!-- Affiche les informations du jeu normalement -->
+                            <th scope="row"><?= $game->getId() ?></th>
+                            <td>
+                                <a href="<?= $game->getLink() ?>" target="_blank"><?= $game->getTitle() ?></a>
+                            </td>
+                            <td><?= $game->getReleaseDate()->format('d M Y') ?></td>
+                            <td>
+                                <a href="<?= $game->getDeveloper()->getLink() ?>" target="_blank"><?= $game->getDeveloper()->getName() ?></a>
+                            </td>
+                            <td>
+                                <a href="<?= $game->getPlatform()->getLink() ?>" target="_blank"><?= $game->getPlatform()->getName() ?></a>
+                            </td>
+                            <td>
+                                <form>
+                                    <input type="hidden" name="edit-id" value="<?= $game->getId() ?>" />
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" action="actions/delete-game.php">
+                                    <input type="hidden" name="id" value="<?= $game->getId() ?>" />
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        <?php endif; ?>
                     </tr>
                     <?php endforeach; ?>
 
