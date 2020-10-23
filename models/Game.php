@@ -93,7 +93,7 @@ class Game
     /**
      * Get the value of releaseDate
      */ 
-    public function getReleaseDate()
+    public function getReleaseDate(): DateTime
     {
         return $this->releaseDate;
     }
