@@ -15,6 +15,23 @@ class Developer extends AbstractBrand
     }
 
     /**
+     * Fetch single developer by id
+     */
+    public static function fetchById(int $id) {
+        global $databaseHandler;
+
+        $statement = $databaseHandler->prepare('SELECT * FROM `developer` WHERE `id` = :id');
+        $statement->execute([ ':id' => $id ]);
+        $result = $statement->fetchAll(PDO::FETCH_FUNC, 'Developer::create');
+        
+        if (empty($result)) {
+            return null;
+        }
+
+        return $result[0];
+    }
+
+    /**
      * Convert `developer` record from database to Developer object
      */
     public static function create($id, $name, $link) {

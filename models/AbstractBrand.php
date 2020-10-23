@@ -64,8 +64,8 @@ abstract class AbstractBrand
     public function setLink($link)
     {
         // Vérifie que la nouvelle valeur reçue est bien une URL
-        if (!filter_var($link, FILTER_VALIDATE_URL)) {
-            throw new Exception('Developer::link property must be a valid URL.');
+        if (!empty($link) && !filter_var($link, FILTER_VALIDATE_URL)) {
+            throw new Exception('AbstractBrand::link property must be a valid URL.');
         }
 
         $this->link = $link;
