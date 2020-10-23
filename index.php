@@ -87,14 +87,20 @@ $platforms = Platform::fetchAll();
                             </td>
                             <td>
                                 <select name="developer">
-                                    <option value="1">Bullfrog Productions</option>
-                                    <option value="2">id Software</option>
+
+                                    <?php foreach ($developers as $developer): ?>
+                                    <option value="<?= $developer->getId() ?>"><?= $developer->getName() ?></option>
+                                    <?php endforeach; ?>
+
                                 </select>
                             </td>
                             <td>
                                 <select name="platform">
-                                    <option value="1">SNES</option>
-                                    <option value="2">MS-DOS</option>
+
+                                    <?php foreach ($platforms as $platform): ?>
+                                    <option value="<?= $platform->getId() ?>"><?= $platform->getName() ?></option>
+                                    <?php endforeach; ?>
+
                                 </select>
                             </td>
                             <td>
