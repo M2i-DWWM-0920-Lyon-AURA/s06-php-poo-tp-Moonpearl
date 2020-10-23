@@ -63,6 +63,44 @@ class Game
     }
 
     /**
+     * 
+     */
+    public function insert()
+    {
+        global $databaseHandler;
+
+        // Crée une requête préparée permettant d'insérer un nouvel enregistrement
+        // dans la table 'game'
+        $statement = $databaseHandler->prepare('
+            INSERT INTO `game` (
+                `title`,
+                `release_date`,
+                `link`,
+                `developer_id`,
+                `platform_id`
+            )
+            VALUES (
+                :title,
+                :release_date,
+                :link,
+                :developer_id,
+                :platform_id
+            )
+        ');
+        // Exécute la requête préparée en remplaçant chaque champ précédé de ':' par la propriété
+        // correspondnate de l'objet
+        $statement->execute([
+            ':title' => $this->title,
+            ':release_date' => $this->releaseDate->format('Y-m-d'),
+            ':link' => $this->link,
+            ':developer_id' => $this->developerId,
+            ':platform_id' => $this->platformId,            
+        ]);
+
+        $this->id = $databaseHandler->lastInsertId();
+    }
+
+    /**
      * Get the value of id
      */ 
     public function getId()
@@ -127,7 +165,7 @@ class Game
     {
         // Vérifie que la nouvelle valeur reçue est bien une URL
         if (!empty($link) && !filter_var($link, FILTER_VALIDATE_URL)) {
-            throw new Exception('Game::link property must be a valid URL.');
+            throw new InvalidValueException('Game::link property must be a valid URL.', 5);
         }
 
         $this->link = $link;

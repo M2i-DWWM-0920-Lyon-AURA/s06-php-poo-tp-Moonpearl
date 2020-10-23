@@ -1,23 +1,16 @@
 <?php
 
+require_once './utils/database-handler.php';
+
 require_once './models/Developer.php';
 require_once './models/Platform.php';
 require_once './models/Game.php';
-
-// Etablit une connexion avec la base de données
-$databaseHandler = new PDO('mysql:host=localhost;dbname=videogames', 'root', 'root');
-// Configure l'interface avec la base de données pour afficher toutes les erreurs
-$databaseHandler->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$databaseHandler->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
 $games = Game::fetchAll();
 $developers = Developer::fetchAll();
 $platforms = Platform::fetchAll();
 
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -34,6 +27,36 @@ $platforms = Platform::fetchAll();
             <div class="card-header">
                 <h1 class="mt-4 mb-4">My beautiful video games</h1>
             </div>
+
+            <?php if (isset($_GET['success'])): ?>
+            <div class="alert alert-success">
+                Nouveau jeu ajouté avec succès!
+            </div>
+            <?php endif; ?>
+
+            <?php if (isset($_GET['error'])): ?>
+            <div class="alert alert-danger">
+                <?php 
+
+                switch ($_GET['error']) {
+                    case 1:
+                        echo 'Veuillez saisir un nom pour le nouveau jeu.';
+                        break;
+                    case 2:
+                        echo 'Veuillez saisir une date de sortie pour le nouveau jeu.';
+                        break;
+                    case 5:
+                        echo 'Veuillez saisir une URL valide pour le lien du nouveau jeu.';
+                        break;                    
+                    default:
+                        echo 'Une erreur est survenue dans l\'envoi de votre requête. Veuillez réessayer.';
+                        break;
+                }
+
+                ?>
+            </div>
+            <?php endif; ?>
+
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -74,7 +97,7 @@ $platforms = Platform::fetchAll();
                     </tr>
                     <?php endforeach; ?>
 
-                    <form>
+                    <form method="post" action="actions/add-game.php">
                         <tr>
                             <th scope="row"></th>
                             <td>
