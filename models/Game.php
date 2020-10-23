@@ -56,8 +56,10 @@ class Game
     /**
      * Convert `game` record from database to Game object
      */
-    public static function create($id, $name, $link) {
-        return new Game($id, $name, $link);
+    public static function create($id, $title, $releaseDate, $link, $developerId, $platformId) {
+        $releaseDate = new DateTime($releaseDate);
+
+        return new Game($id, $title, $releaseDate, $link, $developerId, $platformId);
     }
 
     /**
